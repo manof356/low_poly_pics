@@ -1,13 +1,27 @@
 from PIL import Image
+from PyQt6.QtGui import QImage
 import numpy as np
 
-IMAGE = Image.open(r"D:\Users\manof\Desktop\Игры\ \НАДО\картинки какие то\Лайки\два папуга.jpg")
-SLIDER = 50
+# Исходные данные. Путь к картинке и значение слайдера
+IMAGE_PATH = r"D:\Users\manof\Desktop\Игры\ \НАДО\картинки какие то\Лайки\два папуга.jpg"
+SLIDER = 255  # от 0 до 255
 
-im_as_ar = np.array(IMAGE)
-grayscale_image = SLIDER - im_as_ar
 
-# не нравится мне такое решение. Скорее всего вылезет боком в будущем. Нужно numpy array как то преобразовывать в
-# Qt.Image
-res_image = Image.fromarray(grayscale_image)
-res_image.save("res_image.jpg")
+# какое-то преобразование с картинкой
+def main_low_poly_image(image_path: str, sldr: int):
+    # There will be some complicate code
+
+    image = Image.open(image_path)
+    # Преобразование картинки в nampy array
+    im_as_ar = np.array(image)
+    transform_image=sldr - im_as_ar
+    # Преобразование numpy array обратно в картинку QT, чтобы загрузить её в Label
+    h, w, _ = transform_image.shape
+    res_image = QImage(transform_image, w, h, 3 * w, QImage.Format.Format_RGB888)
+    return res_image
+
+
+
+
+
+

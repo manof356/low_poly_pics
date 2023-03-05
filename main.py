@@ -1,8 +1,8 @@
 from PyQt6 import QtWidgets, QtGui, uic
-from PyQt6.QtWidgets import QMainWindow, QFileDialog
+from PyQt6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 import sys
 from custom_label import ScaledLabel
-from main_algorithm import res_image
+from main_algorithm import main_low_poly_image
 
 
 class MainWindow(QMainWindow):
@@ -18,36 +18,64 @@ class MainWindow(QMainWindow):
         self.ui = uic.loadUi('low_poly.ui', baseinstance=self)
 
         self.Button_Import = self.findChild(QtWidgets.QPushButton, 'Button_Import')
-        self.Button_Import.clicked.connect(self.browse_image)
+        self.Button_Import.clicked.connect(self.import_image_button)
 
         self.Button_Export = self.findChild(QtWidgets.QPushButton, 'Button_Export')
-        self.Button_Export.clicked.connect(self.export_image)
+        self.Button_Export.clicked.connect(self.export_image_button)
+
+        self.Button_Triangulate = self.findChild(QtWidgets.QPushButton, 'Button_Triangulate')
+        self.Button_Triangulate.clicked.connect(self.triangulate_image_button)
+
+        self.Slider = self.findChild(QtWidgets.QSlider, 'Slider')
+        self.Slider.valueChanged.connect(self.slide_it)
+
+        self.slider_val = 0
+
         # пришлось сделать в Qt Designer promote labels, скопировать код со StackOverflow
         # https://stackoverflow.com/questions/72188903/pyside6-how-do-i-resize-a-qlabel-without-loosing-the-size-aspect-ratio
         # И создать файл, как описано в ссылке.
-        self.Image_before = self.findChild(ScaledLabel, 'Image_before')
-        self.Image_after = self.findChild(ScaledLabel, 'Image_after')
+        self.Label_Image_before = self.findChild(ScaledLabel, 'Label_Image_before')
+        self.Label_Image_after = self.findChild(ScaledLabel, 'Label_Image_after')
+        self.Label_slider = self.findChild(QtWidgets.QLabel, 'Label_slider')
 
+        # vars ----------------------------------------------------------------------------------
+        self.image_before_path = ""
 
-    def browse_image(self):
-        # browse_frame = QFileDialog.getOpenFileName(self, "Выбрать изображение", r"D:\Users\manof\Desktop",
-        #                                            "Image Files (*.png;*.jpg;*.jpeg)")
-        # image_path = browse_frame[0]
-        # -------------------------------------------------------------------------------------------
-        image_path = r"D:\Users\manof\Desktop\Игры\ \НАДО\картинки какие то\Лайки\два папуга.jpg"
-        # -------------------------------------------------------------------------------------------
-        image_profile_before = QtGui.QImage(image_path)
-        self.Image_before.setPixmap(QtGui.QPixmap.fromImage(image_profile_before))
-        image_profile_after = QtGui.QImage("res_image.jpg")
-        self.Image_after.setPixmap(QtGui.QPixmap.fromImage(image_profile_after))
+    def error_mes_box_text(self):
+        err = QMessageBox()
+        err.setWindowTitle("Ошибка")
+        err.setIcon(QMessageBox.Icon.Warning)
+        err.setStandardButtons(QMessageBox.StandardButton.Ok)
+        err.setText("Сначала выберете изображение!")
+        err.exec()
 
+    def import_image_button(self):
+        browse_frame1 = QFileDialog.getOpenFileName(self, "Выбрать изображение", r"D:\Users\manof\Desktop",
+                                                    "Image Files (*.png;*.jpg;*.jpeg)")
+        self.image_before_path = browse_frame1[0]
+        image_profile_before = QtGui.QImage(self.image_before_path)
+        self.Label_Image_before.setPixmap(QtGui.QPixmap.fromImage(image_profile_before))
 
+    def export_image_button(self):
+        if self.image_before_path == "":
+            self.error_mes_box_text()
+        else:
+            browse_frame2 = QFileDialog.getSaveFileName(self, "Сохранить как", r"D:\Users\manof\Desktop",
+                                                        "PNG files (*.png)")
+            image_after_path = browse_frame2[0]
+            self.image_after.save(image_after_path)
 
-    def export_image(self):
-        print("click")
+    def triangulate_image_button(self):
+        if self.image_before_path == "":
+            self.error_mes_box_text()
+        else:
+            self.image_after = main_low_poly_image(self.image_before_path, self.slider_val)
+            self.Label_Image_after.setPixmap(QtGui.QPixmap.fromImage(self.image_after))
 
+    def slide_it(self, value):
+        self.slider_val = value
+        self.Label_slider.setText(str(value))
 
-# some code
 
 def main():
     app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
