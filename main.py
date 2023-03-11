@@ -1,7 +1,7 @@
 from PyQt6 import QtWidgets, QtGui, uic
 from PyQt6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 import sys
-from custom_label import ScaledLabel
+from UI.custom_label import ScaledLabel
 from main_algorithm import main_low_poly_image
 
 
@@ -29,8 +29,6 @@ class MainWindow(QMainWindow):
         self.Slider = self.findChild(QtWidgets.QSlider, 'Slider')
         self.Slider.valueChanged.connect(self.slide_it)
 
-        self.slider_val = 0
-
         # пришлось сделать в Qt Designer promote labels, скопировать код со StackOverflow
         # https://stackoverflow.com/questions/72188903/pyside6-how-do-i-resize-a-qlabel-without-loosing-the-size-aspect-ratio
         # И создать файл, как описано в ссылке.
@@ -40,6 +38,7 @@ class MainWindow(QMainWindow):
 
         # vars ----------------------------------------------------------------------------------
         self.image_before_path = ""
+        self.slider_val = 0
 
     def error_mes_box_text(self):
         err = QMessageBox()
@@ -50,11 +49,13 @@ class MainWindow(QMainWindow):
         err.exec()
 
     def import_image_button(self):
-        browse_frame1 = QFileDialog.getOpenFileName(self, "Выбрать изображение", r"D:\Users\manof\Desktop",
-                                                    "Image Files (*.png;*.jpg;*.jpeg)")
-        self.image_before_path = browse_frame1[0]
-        image_profile_before = QtGui.QImage(self.image_before_path)
-        self.Label_Image_before.setPixmap(QtGui.QPixmap.fromImage(image_profile_before))
+        # browse_frame1 = QFileDialog.getOpenFileName(self, "Выбрать изображение", r"D:\Users\manof\Desktop",
+        #                                             "Image Files (*.png;*.jpg;*.jpeg)")
+        # self.image_before_path = browse_frame1[0]
+        self.image_before_path= "два папуга.jpg"
+
+        image_before_profile = QtGui.QImage(self.image_before_path)
+        self.Label_Image_before.setPixmap(QtGui.QPixmap.fromImage(image_before_profile))
 
     def export_image_button(self):
         if self.image_before_path == "":
