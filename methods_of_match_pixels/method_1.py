@@ -1,17 +1,53 @@
 import numpy as np
 
-
 # Пробежка по каждому пикселю и просто сравнение цветов предыдущего со следующим.
 # Покрасить пиксель в красный цвет если разница цветов больше чувствительности
 
-def find_diff_colors(arr: np.array, sensitivity: int):
-    for i in range(0, arr.shape[0] - 7, 7):
-        for j in range(0, arr.shape[1] - 7, 7):
-            if np.sum(np.abs(arr[i, j + 7] - arr[i, j])) > sensitivity:
-                arr[i, j] = np.array([255, 0, 0], dtype="int16")
+a = 7
 
-    for j in range(0, arr.shape[1] - 7, 7):
-        for i in range(0, arr.shape[0] - 7, 7):
-            if np.sum(np.abs(arr[i + 7, j] - arr[i, j])) > sensitivity:
-                arr[i, j] = np.array([255, 0, 0], dtype="int16")
-    return arr.astype("uint8")
+
+# Не актуально и долго
+# def find_diff_colors(arr: np.array, sensitivity: int):
+#     for i in range(0, arr.shape[0] - a, a):
+#         for j in range(0, arr.shape[1] - a, a):
+#             if np.sum(np.abs(arr[i, j + a] - arr[i, j])) > sensitivity:
+#                 arr[i, j] = np.array([255, 0, 0], dtype="int16")
+#
+#     for j in range(0, arr.shape[1] - a, a):
+#         for i in range(0, arr.shape[0] - a, a):
+#             if np.sum(np.abs(arr[i + a, j] - arr[i, j])) > sensitivity:
+#                 arr[i, j] = np.array([255, 0, 0], dtype="int16")
+#     return arr.astype("uint8")
+
+
+def find_diff_colors(arr: np.array, sensitivity: int):
+    # create a copy of array
+    fir_arr = arr
+    sec_arr = arr.copy()
+    old_shape = arr.shape
+    # indexes of first and last rows and cols
+    indx_first_row, indx_first_col = 0, 0
+    indx_last_row, indx_last_col = old_shape[0] - 1, old_shape[1] - 1
+    # delete first and last cols from original arr and copy arr
+    fir_arr_c = np.delete(fir_arr, indx_first_col, axis=1)
+    sec_arr_c = np.delete(sec_arr, indx_last_col, axis=1)
+    # delete first and last rows from original arr and copy arr
+    fir_arr_r = np.delete(fir_arr, indx_first_row, axis=0)
+    sec_arr_r = np.delete(sec_arr, indx_last_row, axis=0)
+     # subtract one array from  other
+    res_by_cols = np.abs(fir_arr_c - sec_arr_c)
+    res_by_rows = np.abs(fir_arr_r - sec_arr_r)
+    # get pixel indexes which contain a number more than sensitivity
+    indxs_cols = np.any(res_by_cols > sensitivity, axis=2)
+    indxs_rows = np.any(res_by_rows > sensitivity, axis=2)
+    # create a false rows and cols
+    false_col = np.zeros([1, old_shape[0]], dtype="bool")
+    false_row = np.zeros([1, old_shape[1]], dtype="bool")
+    # add false rows and cols
+    indxs_cols = np.insert(indxs_cols, 0, false_col, axis=1)
+    indxs_rows = np.insert(indxs_rows, 0, false_row, axis=0)
+    # create array of all indexes
+    indxs = indxs_cols + indxs_rows
+    # set red color pixels which in indxs
+    fir_arr[indxs] = [255, 0, 0]
+    return fir_arr.astype("uint8")

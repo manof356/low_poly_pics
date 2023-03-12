@@ -227,7 +227,7 @@
   <customwidget>
    <class>ScaledLabel</class>
    <extends>QLabel</extends>
-   <header>custom_label</header>
+   <header location="global">UI.custom_label</header>
   </customwidget>
  </customwidgets>
  <resources/>

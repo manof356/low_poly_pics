@@ -1,6 +1,6 @@
+import sys
 from PyQt6 import QtWidgets, QtGui, uic
 from PyQt6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-import sys
 from UI.custom_label import ScaledLabel
 from main_algorithm import main_low_poly_image
 
@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         Constructor of main window
         """
         super(MainWindow, self).__init__()
-        self.ui = uic.loadUi('low_poly.ui', baseinstance=self)
+        self.ui = uic.loadUi("UI\low_poly.ui", baseinstance=self)
 
         self.Button_Import = self.findChild(QtWidgets.QPushButton, 'Button_Import')
         self.Button_Import.clicked.connect(self.import_image_button)
@@ -62,7 +62,8 @@ class MainWindow(QMainWindow):
             self.error_mes_box_text()
         else:
             browse_frame2 = QFileDialog.getSaveFileName(self, "Сохранить как", r"D:\Users\manof\Desktop",
-                                                        "PNG files (*.png)")
+                                                        "PNG files (*.png);;"
+                                                        "JPG files (*.jpg)")
             image_after_path = browse_frame2[0]
             self.image_after.save(image_after_path)
 
