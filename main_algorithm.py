@@ -12,7 +12,6 @@ def main_low_poly_image(image_path: str, sldr: int):
 
     # main algorithm here ----vvv----
     transform_image = find_diff_colors(im_as_ar, sldr, 1)
-    # transform_image = np.array(im_as_ar - sldr, dtype="uint8")
     # main algorithm here ----^^^----
 
     # Преобразование numpy array обратно в картинку QT, чтобы загрузить её в Label
