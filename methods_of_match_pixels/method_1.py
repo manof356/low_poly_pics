@@ -88,21 +88,21 @@ def step_subtractor(arr1: np.array, arr2: np.array, step: int):
     return res
 
 
-def find_diff_colors(arr: np.array, sensitivity: int, step: int = 1):
+def find_diff_colors(img: np.array, sensitivity: int, step: int = 1):
     """
     this func finds a difference color between two adjacent pixels with step
     it means func will search difference between STEP adjacent pixels.
     Pixels are different when even though 1 out of 3 RGB component more than sensitivity
-    :param arr: image as array with shape (WxHx3)
+    :param img: image as array with shape (WxHx3)
     :param step: step between pixels
     :param sensitivity: it's a difference between pixels which will be compared
     :return: image as array with red pixels
     """
     # create a copy of array
     # делаем копии массивов
-    fir_arr = arr
-    sec_arr = arr.copy()
-    old_shape = arr.shape
+    fir_arr = img
+    sec_arr = img.copy()
+    old_shape = img.shape
     # indexes of first and last rows and cols
     indx_first_row, indx_first_col = 0, 0
     indx_last_row, indx_last_col = old_shape[0] - 1, old_shape[1] - 1
@@ -130,4 +130,4 @@ def find_diff_colors(arr: np.array, sensitivity: int, step: int = 1):
     res_indx = step_subtractor(false_indxs, indxs, step).astype("bool")
     # set red color pixels which in indxs
     fir_arr[res_indx] = [255, 0, 0]
-    return fir_arr.astype("uint8")
+    return fir_arr.astype(np.uint8)
