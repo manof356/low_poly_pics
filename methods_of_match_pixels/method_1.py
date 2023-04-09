@@ -1,5 +1,6 @@
 import numpy as np
 
+
 # Пробежка по каждому пикселю и просто сравнение цветов предыдущего со следующим.
 # Покрасить пиксель в красный цвет если разница цветов больше чувствительности
 
@@ -80,7 +81,7 @@ def step_subtractor(arr1: np.array, arr2: np.array, step: int):
 
     indxs_out = np.array(np.meshgrid(indxs_row_in, indxs_col_in)).T.reshape(-1, 2)
 
-    false_array = np.zeros(arr1.shape, dtype="bool")
+    false_array = np.zeros(arr1.shape, dtype=np.bool_)
 
     false_array[indxs_out[..., 0], indxs_out[..., 1]] = True
 
@@ -99,7 +100,6 @@ def find_diff_colors(img: np.array, sensitivity: int, step: int = 1):
     :return: image as array with red pixels
     """
     # create a copy of array
-    # делаем копии массивов
     fir_arr = img
     sec_arr = img.copy()
     old_shape = img.shape
@@ -119,15 +119,15 @@ def find_diff_colors(img: np.array, sensitivity: int, step: int = 1):
     indxs_rows = np.any(res_by_rows > sensitivity, axis=2)
     indxs_cols = np.any(res_by_cols > sensitivity, axis=2)
     # create a false rows and cols
-    false_row = np.zeros([1, old_shape[1]], dtype="int")
-    false_col = np.zeros([1, old_shape[0]], dtype="int")
+    false_row = np.zeros([1, old_shape[1]], dtype=np.intc)
+    false_col = np.zeros([1, old_shape[0]], dtype=np.intc)
     # add false rows and cols
     indxs_rows = np.insert(indxs_rows, 0, false_row, axis=0)
     indxs_cols = np.insert(indxs_cols, 0, false_col, axis=1)
     # create array of all indexes
-    false_indxs = np.zeros((old_shape[0], old_shape[1]), dtype="int")
+    false_indxs = np.zeros((old_shape[0], old_shape[1]), dtype=np.intc)
     indxs = indxs_cols + indxs_rows
-    res_indx = step_subtractor(false_indxs, indxs, step).astype("bool")
+    res_indx = step_subtractor(false_indxs, indxs, step).astype(np.bool_)
     # set red color pixels which in indxs
     fir_arr[res_indx] = [255, 0, 0]
-    return fir_arr.astype(np.uint8)
+    return fir_arr.astype(np.uint8)  # fir_arr.astype(np.uint8)
